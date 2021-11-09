@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from .. import crud, database, schemas, models
+from .. import database, schemas, models
 from typing import List
+from passlib.context import CryptContext
+from ..repository import users
 
 router = APIRouter(
     tags=["Users"],
@@ -10,10 +12,20 @@ router = APIRouter(
 
 get_db = database.get_db
 
-@router.put("/signup")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+@router.get("/", response_model=List[schemas.ShowUser])
+def get_all_users(db:Session = Depends(get_db)):
+    return users.get_all(db)
+
+@router.put("/signup", response_model=schemas.ShowUser)
 def create_user(request: schemas.User, db:Session = Depends(get_db)):
-    new_user = models.User(name = request.name, email=request.email, password=request.password)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+    return users.create(request, db)
+
+@router.get('/{id}', response_model=schemas.ShowUser)
+def get_user(id:int, db:Session = Depends(get_db)):
+    return users.get_single_user(id, db)
+
+
+   
