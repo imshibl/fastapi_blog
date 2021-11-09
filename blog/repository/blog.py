@@ -1,6 +1,6 @@
 from .. import schemas, models
 from typing import List
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 def get_all(db: Session):

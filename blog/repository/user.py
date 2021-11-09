@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from .. import schemas, models
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from passlib.context import CryptContext
 
 
